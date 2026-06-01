@@ -34,6 +34,8 @@
 
 🛰 **社区好物 · [Claude Fleet](https://github.com/tianyilt/claude-fleet)**（by [@tianyilt](https://github.com/tianyilt)）—— 一个本地**只读**数据看板，同时盯住你开的一堆 **Claude Code / Codex** 窗口：triage（谁在干活 / 等你点权限 / 跑完了）· 一键 **Focus** 跳到对应终端 · ~50ms 全文搜所有 transcript · skill / memory 用量分析。像 ARIS 这种动辄并行一片 agent 的工作流特别合适。**好用的话点个 ⭐**
 
+🪟 **更轻的自家选择 · [ARIS-Monitor](aris-monitor/)** —— 不想开浏览器?ARIS 自带一个 macOS 置顶**悬浮小窗**(纯 Python stdlib,**无浏览器 · 无 Chrome 扩展**):只盯"**哪个会话在等你授权**" 🔴,点一行直接跳到那个终端。**Claude Fleet = 全功能网页看板;ARIS-Monitor = 同一想法的极简常驻版**,各取所需。
+
 <table align="center" width="100%">
 <tr>
 <td width="66%" align="center" valign="top">
@@ -70,8 +72,6 @@ cd claude-fleet && bash run.sh
 ```
 
 </details>
-
-🪟 **更轻的自家选择 · [ARIS-Monitor](aris-monitor/)** —— 不想开浏览器?ARIS 自带一个 macOS 置顶**悬浮小窗**(纯 Python stdlib,**无浏览器 · 无 Chrome 扩展**):只盯"**哪个会话在等你授权**" 🔴,点一行直接跳到那个终端。**Claude Fleet = 全功能网页看板;ARIS-Monitor = 同一想法的极简常驻版**,各取所需。
 
 🔥 [**ARIS-Code CLI — 独立安装版**](docs/ARIS-Code-README_CN.md) · [English](docs/ARIS-Code-README_EN.md) | [⬇️ Download](https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep/releases/latest)
 
