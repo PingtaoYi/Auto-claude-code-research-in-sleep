@@ -1082,54 +1082,13 @@ claude   # hooks 立即生效
 
 ### ⚡ Effort Levels
 
-> **"ARIS 应该花多大力气？"** — 每个 skill 都接受 `— effort: lite | balanced | max | beast`。
-
-| 等级 | Token | 适合 |
-|------|:-----:|------|
-| `lite` | ~0.4x | 快速探索，预算有限 |
-| `balanced` | 1x | 日常科研（**默认**） |
-| `max` | ~2.5x | 投稿准备 |
-| `beast` | ~5-8x | 顶会冲刺，全部拉满 |
-
-**不变项**：Codex reasoning 永远 **xhigh**，DBLP 引用永远开，reviewer 独立性永远开。
-
-> 📖 完整规范：[`shared-references/effort-contract.md`](skills/shared-references/effort-contract.md)
+每个 skill 都接受 `— effort: lite | balanced | max | beast` —— 调节广度/深度(论文 · idea · pilot · 轮次 · seed · 审计深度)从 ~0.4× 到 ~5–8×;**默认 `balanced`**(老用户零变化)。任何档位都**不变**:Codex reasoning 永远 `xhigh`、DBLP 引用永远开、reviewer 独立性永远开、实验诚实度永远开。**📖 完整规范 + 各 skill 计数 → [`effort-contract.md`](skills/shared-references/effort-contract.md)**
 
 <a id="-optional-gpt-54-pro-via-oracle"></a>
 
 ### 🧿 可选：GPT-5.4 Pro via Oracle
 
-> **给需要最强审稿者的专家研究者。**
-
-[Oracle](https://github.com/steipete/oracle) 解锁 **GPT-5.4 Pro** 作为 ARIS 审稿者——最强推理模型。适合数学证明验证、逐行代码审计和复杂实验设计评审。
-
-**用法：** 给任意 reviewer-aware skill（`/research-review`、`/proof-checker`、`/experiment-audit`、`/auto-review-loop`、`/idea-creator`、`/rebuttal` 等）加 `— reviewer: oracle-pro`。
-
-**默认永远是 Codex xhigh。** Oracle 未安装 = 零影响。`— reviewer: oracle-pro` 在未装 Oracle 时优雅降级到 Codex 并给警告。
-
-<details>
-<summary><b>展开 Oracle 安装命令与各 skill 示例</b> —— npm install、claude mcp add、API / 浏览器模式选择、4 个 reviewer-aware skill 示例</summary>
-
-**设置：**
-```bash
-npm install -g @steipete/oracle          # 安装 Oracle
-claude mcp add oracle -s user -- oracle-mcp  # 添加 MCP
-# 重启 Claude Code
-export OPENAI_API_KEY="your-key"         # API 模式（快）
-# 或：在 Chrome 登录 chatgpt.com          # 浏览器模式（免费）
-```
-
-**示例 — 给任意 skill 加 `— reviewer: oracle-pro`：**
-```bash
-/research-review "草稿" — reviewer: oracle-pro
-/proof-checker "paper/" — reviewer: oracle-pro
-/experiment-audit — reviewer: oracle-pro
-/auto-review-loop "范围" — reviewer: oracle-pro
-```
-
-</details>
-
-> 📖 完整规范：[`shared-references/reviewer-routing.md`](skills/shared-references/reviewer-routing.md)
+给任意 reviewer-aware skill(`/proof-checker`、`/research-review`、`/experiment-audit`、`/rebuttal`…)加 `— reviewer: oracle-pro`,把审稿走 **GPT-5.4 Pro** —— 最强推理,适合深度证明 / 代码 / 实验设计审。默认永远 Codex xhigh;Oracle 未装 ⇒ 优雅降级 + 警告(零影响)。**📖 安装 + 各 skill 示例 → [`reviewer-routing.md`](skills/shared-references/reviewer-routing.md)**
 
 ---
 

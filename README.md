@@ -1258,154 +1258,17 @@ claude   # hooks active immediately
 
 ### ⚡ Effort Levels
 
-> **"How hard should ARIS work?"** — Every skill accepts `— effort: lite | balanced | max | beast`.
-
-| Level | Tokens | Best for | What changes |
-|-------|:------:|----------|-------------|
-| `lite` | ~0.4x | Quick exploration, budget users | Fewer papers, ideas, rounds. Minimum viable depth |
-| `balanced` | 1x | Normal workflow (**default**) | Current ARIS behavior. Zero change for existing users |
-| `max` | ~2.5x | Serious submission prep | More papers, deeper review, more ablations |
-| `beast` | ~5-8x | Top-venue final sprint | Every knob to maximum. No budget limit |
-
-**What NEVER changes regardless of effort:**
-- Codex reasoning: **always xhigh** (reviewer quality is non-negotiable)
-- DBLP/CrossRef citations: **always on**
-- Reviewer independence: **always on**
-- Experiment integrity: **always on**
-
-<details>
-<summary><b>Show effort usage examples and per-skill comparison table</b> — command overrides; exact counts for papers / ideas / pilots / rounds / seeds / audit depth at each level</summary>
-
-```bash
-# Every skill accepts effort independently
-/research-lit "topic" — effort: beast              # 40-50 papers, 15+ queries
-/idea-creator "direction" — effort: lite           # 4-6 ideas, quick filter
-/auto-review-loop — effort: max                    # 6 rounds, 4-6 fixes/round
-
-# Mix with specific overrides
-/auto-review-loop — effort: beast, review_rounds: 3  # beast everything, but cap at 3 rounds
-
-# Full pipeline
-/research-pipeline "your topic" — effort: beast    # top-venue sprint mode
-```
-
-| Skill | Dimension | lite | balanced | max | beast |
-|-------|-----------|:----:|:--------:|:---:|:-----:|
-| research-lit | papers | 6-8 | 10-15 | 18-25 | 40-50 |
-| idea-creator | ideas | 4-6 | 8-12 | 12-16 | 20-30 |
-| idea-creator | pilots | 1-2 | 2-3 | 3-4 | 5-6 |
-| novelty-check | claims | 2-3 | 3-4 | 4-6 | all |
-| research-refine | rounds | 3 | 5 | 7 | 10+ |
-| experiment-plan | experiments | 3 | 5 | 7 | 10+ |
-| experiment-plan | seeds | 1 | 3 | 5 | 5 |
-| auto-review-loop | rounds | 2 | 3-4 | 6 | 8+ |
-| paper-improvement | rounds | 1 | 2 | 3 | 5 |
-| paper-illustration | iterations | 2 | 3 | 5 | 7 |
-| rebuttal | stress tests | 0-1 | 1 | 2 | 3 |
-| experiment-audit | depth | skip | basic | full | line-by-line |
-
-</details>
-
-> 📖 Full specification: [`shared-references/effort-contract.md`](skills/shared-references/effort-contract.md)
+Every skill takes `— effort: lite | balanced | max | beast` — scaling breadth/depth (papers · ideas · pilots · rounds · seeds · audit depth) from ~0.4× to ~5–8×; **`balanced` is the default** (zero change for existing users). What **never** changes at any level: Codex reasoning stays `xhigh`, DBLP/CrossRef citations on, reviewer independence on, experiment integrity on. **📖 Full spec + per-skill counts → [`effort-contract.md`](skills/shared-references/effort-contract.md)**
 
 ### Assurance Gate (effort: max | beast)
 
-ARIS has two independent axes: **`effort`** controls how much work is done
-(breadth/depth), **`assurance`** controls whether mandatory audits are
-load-bearing. Default mapping:
-
-| `effort` | Implied `assurance` | Paper-writing Phase 6 behavior |
-|----------|---------------------|--------------------------------|
-| `lite` / `balanced` (**default**) | `draft` | **Current behavior, zero change.** Audits run only if their content detector matches; missing artifacts are non-blocking. |
-| `max` / `beast` | `submission` | Phase 6 force-invokes `/proof-checker`, `/paper-claim-audit`, `/citation-audit` in fresh threads, runs `tools/verify_paper_audits.sh`, and **refuses to emit the Final Report** if the verifier returns non-zero (missing / stale / FAIL / BLOCKED / ERROR). |
-
-**What this fixes:** previously, `— effort: beast` did not actually
-guarantee the three mandatory audits ran — the content detectors could
-silent-skip, so beast-mode papers could ship without proof verification or
-citation checks. The assurance axis makes audit enforcement externally
-verifiable via `tools/verify_paper_audits.sh` (the verifier's exit code is
-the source of truth, not the executor's self-report).
-
-**Backwards compatibility:** users on the default `balanced` level see
-zero change. Only users who opt up to `max` / `beast`, or who explicitly
-pass `— assurance: submission`, see the new gate.
-
-**Escape hatch:** `— effort: beast, assurance: draft` gets the old
-"depth-only, no audit gate" behavior back. Legal but discouraged for
-actual submissions.
-
-<details>
-<summary><b>Show optional Stop-hook hardening snippet</b> — harness-level block (~/.claude/settings.json) that physically prevents session end while the verifier is red</summary>
-
-**Optional harness hardening (advanced):** teams who want the model to
-be *physically* prevented from ending a session while the verifier is red
-can register a Stop hook in `~/.claude/settings.json` (replace
-`<ARIS_REPO>` with the absolute path to your ARIS clone, e.g.
-`/Users/you/Auto-claude-code-research-in-sleep`):
-
-```json
-{
-  "hooks": {
-    "Stop": [
-      {"command": "bash <ARIS_REPO>/tools/verify_paper_audits.sh paper/ --assurance submission"}
-    ]
-  }
-}
-```
-
-This is not required — the default repo behavior (Phase 6 verifier-as-truth)
-already blocks Final Report emission on a red verdict. The Stop hook is a
-belt-and-suspenders layer for teams that want harness-level enforcement.
-
-</details>
-
-> 📖 Full specification: [`shared-references/assurance-contract.md`](skills/shared-references/assurance-contract.md)
+A second axis, orthogonal to effort: **assurance** decides whether mandatory audits are load-bearing. `lite`/`balanced` ⇒ `draft` (audits non-blocking — current behavior, zero change); `max`/`beast` ⇒ `submission` (paper-writing Phase 6 force-runs `/proof-checker` + `/paper-claim-audit` + `/citation-audit` in fresh threads and refuses the Final Report if `tools/verify_paper_audits.sh` exits non-zero). Escape hatch: `— effort: beast, assurance: draft`. **📖 Full spec → [`assurance-contract.md`](skills/shared-references/assurance-contract.md)**
 
 <a id="-optional-gpt-54-pro-via-oracle"></a>
 
 ### 🧿 Optional: GPT-5.4 Pro via Oracle
 
-> **For expert researchers who want the strongest possible reviewer.**
-
-[Oracle](https://github.com/steipete/oracle) unlocks **GPT-5.4 Pro** as an ARIS reviewer — the strongest reasoning model available. Pro excels at deep mathematical proof verification, line-by-line code auditing, and complex experimental design critique.
-
-**Usage rule:** add `— reviewer: oracle-pro` to any reviewer-aware skill (`/research-review`, `/proof-checker`, `/experiment-audit`, `/auto-review-loop`, `/idea-creator`, `/rebuttal`, …).
-
-**Default is always Codex xhigh.** Oracle not installed = zero impact. `— reviewer: oracle-pro` without Oracle installed = graceful fallback to Codex + warning.
-
-<details>
-<summary><b>Show Oracle setup commands and per-skill examples</b> — npm install, claude mcp add, API vs browser mode, 6 reviewer-aware skill examples</summary>
-
-**Setup:**
-```bash
-# 1. Install Oracle
-npm install -g @steipete/oracle
-
-# 2. Add Oracle MCP to Claude Code
-claude mcp add oracle -s user -- oracle-mcp
-
-# 3. Restart Claude Code
-
-# 4a. API mode (fast, recommended):
-export OPENAI_API_KEY="your-key"
-
-# 4b. Browser mode (free, no API key — log in to ChatGPT in Chrome):
-# Just open Chrome → chatgpt.com → log in
-```
-
-**Examples — add `— reviewer: oracle-pro` to any skill:**
-```bash
-/research-review "my draft" — reviewer: oracle-pro          # Pro-level paper critique
-/proof-checker "paper/" — reviewer: oracle-pro              # deepest mathematical verification
-/experiment-audit — reviewer: oracle-pro                    # Pro audits your eval code
-/auto-review-loop "scope" — reviewer: oracle-pro            # Pro stress test each round
-/idea-creator "direction" — reviewer: oracle-pro            # Pro evaluates your ideas
-/rebuttal "paper/ + reviews" — reviewer: oracle-pro         # Pro stress tests your rebuttal
-```
-
-</details>
-
-> 📖 Full specification: [`shared-references/reviewer-routing.md`](skills/shared-references/reviewer-routing.md)
+Add `— reviewer: oracle-pro` to any reviewer-aware skill (`/proof-checker`, `/research-review`, `/experiment-audit`, `/rebuttal`, …) to route review through **GPT-5.4 Pro** — strongest reasoning for deep proof / code / experiment-design critique. Default stays Codex xhigh; Oracle not installed ⇒ graceful fallback + warning (zero impact). **📖 Setup + per-skill examples → [`reviewer-routing.md`](skills/shared-references/reviewer-routing.md)**
 
 ---
 
