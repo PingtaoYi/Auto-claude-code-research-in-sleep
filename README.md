@@ -493,7 +493,7 @@ cd Auto-claude-code-research-in-sleep && ls skills/ | xargs -I{} rm -rf ~/.claud
 </details>
 
 <details>
-<summary><b>Show all 16 inline parameters and 12 override examples</b> — AUTO_PROCEED / sources / arxiv download / DBLP_BIBTEX / code review / wandb / illustration / venue / base repo / gpu / compact / ref paper / effort / reviewer / difficulty (full per-skill defaults live in <a href="#customization">§ Customization</a>)</summary>
+<summary><b>Show all 16 inline parameters and 14 override examples</b> — AUTO_PROCEED / sources / arxiv download / DBLP_BIBTEX / code review / wandb / illustration / venue / base repo / gpu / compact / ref paper / effort / reviewer / difficulty (full per-skill defaults live in <a href="#customization">§ Customization</a>)</summary>
 
 All pipeline behaviors are configurable via inline overrides — append `— key: value` to any command:
 
@@ -501,7 +501,7 @@ All pipeline behaviors are configurable via inline overrides — append `— key
 |-----------|---------|-------------|
 | `AUTO_PROCEED` | `true` | Auto-continue at idea selection gate. Set `false` to manually pick which idea to pursue before committing GPU time |
 | `human checkpoint` | `false` | Pause after each review round so you can read the score, give custom modification instructions, skip specific fixes, or stop early |
-| `sources` | `all` | Which literature sources to search: `zotero`, `obsidian`, `local`, `web`, `semantic-scholar`, `deepxiv`, `exa`, or `all`. Note: `semantic-scholar`, `deepxiv`, and `exa` must be explicitly listed — not included in `all` |
+| `sources` | `all` | Which literature sources to search: `zotero`, `obsidian`, `local`, `web`, `semantic-scholar`, `deepxiv`, `exa`, `gemini`, `openalex`, or `all`. Note: `semantic-scholar`, `deepxiv`, `exa`, `gemini`, and `openalex` must be explicitly listed — not included in `all` |
 | `arxiv download` | `false` | Download top relevant arXiv PDFs during literature survey. When `false`, only fetches metadata (title, abstract, authors) |
 | `DBLP_BIBTEX` | `true` | Fetch real BibTeX from [DBLP](https://dblp.org)/[CrossRef](https://www.crossref.org) instead of LLM-generated entries. Eliminates hallucinated citations. Zero install |
 | `code review` | `true` | GPT-5.6-Sol xhigh reviews experiment code before GPU deployment. Set `false` to skip |
@@ -522,6 +522,8 @@ All pipeline behaviors are configurable via inline overrides — append `— key
 /research-pipeline "your topic" — sources: zotero, web                         # only search Zotero + web (skip local PDFs)
 /research-pipeline "your topic" — sources: all, deepxiv                        # default sources plus DeepXiv progressive retrieval
 /research-pipeline "your topic" — sources: all, exa                            # default sources plus Exa AI-powered web search
+/research-pipeline "your topic" — sources: all, gemini                         # default sources plus Gemini discovery
+/research-pipeline "your topic" — sources: all, openalex                       # default sources plus OpenAlex citation graph
 /research-pipeline "your topic" — arxiv download: true                         # download top arXiv PDFs during literature survey
 /research-pipeline "your topic" — difficulty: nightmare                        # maximum adversarial review before submission
 /research-pipeline "your topic" — effort: beast                               # all knobs to maximum — top-venue sprint
